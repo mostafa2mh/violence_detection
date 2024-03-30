@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Violence Detection</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Violence Detection</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="predictLink">Predict</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="liveStreamLink">Live Stream</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="infoLink">Info</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="aboutUsLink">About Us</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" id="predictContent" style="display: block;">
+        <h1 class="text-center mt-5">Violence Detection</h1>
+    
+        <form class="p-3 text-center mt-4" action="/" method="post" enctype="multipart/form-data">
+            <input type="radio" id="oldModel" name="modelSelection" value="oldModel" {% if selected_model == 'oldModel' %} checked {% endif %}>
+            <label for="oldModel">LSTM Model</label>
+            <br>
+            <input type="radio" id="newModel" name="modelSelection" value="newModel" {% if selected_model == 'newModel' %} checked {% endif %}>
+            <label for="newModel">CNN-LSTM Model</label>
+            <br>
+            <input class="form-control" type="file" name="video_file" accept="video/avi">
+            <button class="btn btn-primary mt-3" type="submit">Predict Video</button>
+        </form>
+        
+        
+        {% if prob_violence is not none %}
+        <!-- Prediction result display -->
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Prediction Result</h5>
+                        <p class="card-text">Probability of Violence: <span style="color:red;">{{ prob_violence }}</span></p>
+                        <p class="card-text">Probability of Non-violence: <span style="color:green;">{{ prob_non_violence }}</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    
+        <!-- Display uploaded video -->
+        {% if video_tag %}
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-8"> <!-- Adjusted to col-md-8 to make it wider -->
+                <div class="card" >
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Uploaded Video</h5>
+                        <div style="width: 800px; height: 600px;"> <!-- Set the desired width and height -->
+                            {{ video_tag | safe }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+
+    <div class="container" id="liveStreamContent" style="display: none;">
+        <h1 class="text-center mt-5">Live Stream</h1>
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center">
+                <form method="POST" action="/start_stream">
+                    <button class="btn btn-primary" style="margin: 0 auto;">Join Live Stream</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container" id="infoContent" style="display: none;">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">What is Violence Detection?</h5>
+                        <p class="card-text">Violence detection is the process of using technologies such as machine learning and computer vision to automatically identify violent activities or behaviors in videos or images.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Importance of Violence Detection</h5>
+                        <p class="card-text">Detecting violence in real-time can be crucial for various applications such as public safety, surveillance systems, and content moderation on social media platforms. It helps in early intervention and prevention of harmful incidents.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Technologies Used</h5>
+                        <p class="card-text">Violence detection systems often employ deep learning models, neural networks, and video processing algorithms to analyze visual content and identify patterns associated with violent actions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Challenges and Limitations</h5>
+                        <p class="card-text">Despite advancements, violence detection systems may encounter challenges such as false positives, varying environmental conditions, and the need for large annotated datasets for training.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container" id="aboutUsContent" style="display: none;">
+        <h1 class="text-center mt-5">About Us</h1>
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-4">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Mostafa Mohamed</h5>
+                        <img src="{{ url_for('static', filename='images/Cat03.jpg') }}" alt="Founder" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Farah Adel</h5>
+                        <img src="{{ url_for('static', filename='images/Cat03.jpg') }}" alt="CEO" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-4">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Yousef Emad</h5>
+                        <img src="{{ url_for('static', filename='images/Cat03.jpg') }}" alt="CTO" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Nada Mohamed</h5>
+                        <img src="{{ url_for('static', filename='images/Cat03.jpg') }}" alt="Lead Developer" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-4">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Yomna Mostafa</h5>
+                        <img src="{{ url_for('static', filename='images/Cat03.jpg') }}" alt="Marketing Director" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Rawan Sameh</h5>
+                        <img src="{{ url_for('static', filename='images/Cat03.jpg') }}" alt="Design Lead" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <script>
+        document.getElementById("predictLink").addEventListener("click", function(event){
+            event.preventDefault();
+            document.getElementById("predictContent").style.display = "block";
+            document.getElementById("liveStreamContent").style.display = "none";
+            document.getElementById("infoContent").style.display = "none";
+            document.getElementById("aboutUsContent").style.display = "none";
+        });
+
+        document.getElementById("liveStreamLink").addEventListener("click", function(event){
+            event.preventDefault();
+            document.getElementById("predictContent").style.display = "none";
+            document.getElementById("liveStreamContent").style.display = "block";
+            document.getElementById("infoContent").style.display = "none";
+            document.getElementById("aboutUsContent").style.display = "none";
+        });
+
+        document.getElementById("infoLink").addEventListener("click", function(event){
+            event.preventDefault();
+            document.getElementById("predictContent").style.display = "none";
+            document.getElementById("liveStreamContent").style.display = "none";
+            document.getElementById("infoContent").style.display = "block";
+            document.getElementById("aboutUsContent").style.display = "none";
+        });
+
+        document.getElementById("aboutUsLink").addEventListener("click", function(event){
+            event.preventDefault();
+            document.getElementById("predictContent").style.display = "none";
+            document.getElementById("liveStreamContent").style.display = "none";
+            document.getElementById("infoContent").style.display = "none";
+            document.getElementById("aboutUsContent").style.display = "block";
+        });
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js" integrity="sha384-LUvMJSw6b1bsNZfEVQMl3ZRHeabu8Z3gyImbixrhBj0Wxy8siUHcsk1MHS1igC8v" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shCk+v5O8w8bh0JS6svo1nW+VlNJuaUqbI476" crossorigin="anonymous"></script>
+</body>
+</html>
